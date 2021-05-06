@@ -49,6 +49,7 @@ public class View implements Observer {
         frame.setVisible(true);
     }
     
+    @Override
     public void update(Observable o, Object arg) {
         panel.repaint();
     }
