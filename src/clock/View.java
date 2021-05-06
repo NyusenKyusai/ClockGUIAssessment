@@ -1,6 +1,9 @@
 package clock;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
 import javax.swing.*;
 import java.util.Observer;
 import java.util.Observable;
@@ -25,6 +28,61 @@ public class View implements Observer {
         // figure out how to pack more than one thing into one of those
         // positions. This is the very simplest border layout possible, just
         // to help you get started.
+        
+        JMenuBar menuBar = new JMenuBar();
+        frame.setJMenuBar(menuBar);
+        
+        JMenu fileMenu = new JMenu("File");
+        fileMenu.setMnemonic(KeyEvent.VK_F);
+        
+        JMenuItem exitItem = new JMenuItem("Exit");
+        exitItem.setMnemonic(KeyEvent.VK_X);
+        
+        fileMenu.add(exitItem);
+        
+        menuBar.add(fileMenu);
+        
+        JMenu alarmMenu = new JMenu("Alarm");
+        alarmMenu.setMnemonic(KeyEvent.VK_A);
+        
+        JMenuItem addItem = new JMenuItem("Add Alarm");
+        addItem.setMnemonic(KeyEvent.VK_D);
+        
+        JMenuItem viewItem = new JMenuItem("View Alarms");
+        viewItem.setMnemonic(KeyEvent.VK_V);
+        
+        alarmMenu.add(addItem);
+        alarmMenu.add(viewItem);
+        
+        menuBar.add(alarmMenu);
+        
+        // Handler implemented as named inner class
+        class ExitItemListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                System.exit(0);
+            }
+        }
+        
+        // Handler implemented as named inner class
+        class AddItemListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                
+            }
+        }
+        
+        // Handler implemented as named inner class
+        class ViewItemListener implements ActionListener {
+            @Override
+            public void actionPerformed(ActionEvent event) {
+                
+            }
+        }
+        
+        exitItem.addActionListener(new ExitItemListener());
+        addItem.addActionListener(new AddItemListener());
+        viewItem.addActionListener(new ViewItemListener());
         
         Container pane = frame.getContentPane();
         
