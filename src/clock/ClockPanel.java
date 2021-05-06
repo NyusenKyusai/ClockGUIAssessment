@@ -16,6 +16,7 @@ public class ClockPanel extends JPanel {
         setBackground(Color.white);
     }
     
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         

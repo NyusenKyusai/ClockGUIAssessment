@@ -16,6 +16,7 @@ public class Controller {
         view = v;
         
         listener = new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
                 model.update();
             }
