@@ -137,7 +137,7 @@ public class View implements Observer {
                         System.out.println("Add operation failed: " + e);
                     }
                     
-                    System.out.println(q.toString());
+                    //System.out.println(q.toString());
                 }
             }
         }
