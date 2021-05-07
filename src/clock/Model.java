@@ -1,6 +1,7 @@
 package clock;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Observable;
 //import java.util.GregorianCalendar;
 
@@ -11,6 +12,10 @@ public class Model extends Observable {
     int second = 0;
     
     int oldSecond = 0;
+    
+    int year = 0;
+    Date time;
+    Date initialTime;
     
     public Model() {
         update();
@@ -26,5 +31,15 @@ public class Model extends Observable {
             setChanged();
             notifyObservers();
         }
+        
+        year = date.get(Calendar.YEAR);
+        
+        Calendar alarmMin = Calendar.getInstance();
+        time = date.getTime();
+        alarmMin.setTime(time);
+        
+        alarmMin.add(Calendar.MINUTE, -1);
+        initialTime = alarmMin.getTime();
+        
     }
 }
