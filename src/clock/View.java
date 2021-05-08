@@ -36,13 +36,15 @@ public class View implements Observer {
     JPanel viewButtons;
     int counter;
     Model modelGlobal;
+    Alarm alarmSound;
+    JFrame frame;
     
     public View(Model model) {
         q = new SortedLinkedPriorityQueue<>();
         
         modelGlobal = model;
         
-        JFrame frame = new JFrame();
+        frame = new JFrame();
         panel = new ClockPanel(model);
         //frame.setContentPane(panel);
         frame.setTitle("Java Clock");
@@ -273,5 +275,33 @@ public class View implements Observer {
     @Override
     public void update(Observable o, Object arg) {
         panel.repaint();
+        
+        try {
+            alarmSound = (Alarm) q.head();
+            
+            System.out.println(modelGlobal.time.getTime());
+            System.out.println(alarmSound.getDate().getTime());
+            
+            if (modelGlobal.time.getTime() >= alarmSound.getDate().getTime()) {
+                JOptionPane pane = new JOptionPane("Your Alarm has gone off", JOptionPane.INFORMATION_MESSAGE);
+                final JDialog dialog = pane.createDialog(null, "Alarm");
+                
+                dialog.setModal(false);
+                dialog.setVisible(true);
+                
+                new Timer(6000, new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        dialog.setVisible(false);
+                    }
+                }).start();
+                
+                q.remove();
+            }
+        } catch (QueueUnderflowException e) {
+            //System.out.println("Add operation failed: " + e);
+        }
+        
+        
     }
 }

@@ -57,18 +57,11 @@ public class Alarm {
             minutes = String.valueOf(((Date) spinner.getValue()).getMinutes());
         }
         
-        if (((Date) spinner.getValue()).getSeconds() < 10) {
-            seconds = "0" + String.valueOf(((Date) spinner.getValue()).getSeconds());
-        } else {
-            seconds = String.valueOf(((Date) spinner.getValue()).getSeconds());
-        }
-        
         priority = Long.parseLong(String.valueOf(((Date) spinner.getValue()).getYear()) 
                 + month
                 + dateOfMonth
                 + hours
                 + minutes
-                + seconds
         );
         
         return priority;
