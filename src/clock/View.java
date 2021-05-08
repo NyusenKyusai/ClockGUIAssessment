@@ -6,14 +6,20 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import javax.swing.*;
 import java.util.Observer;
 import java.util.Observable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import queuemanager.QueueOverflowException;
 import queuemanager.QueueUnderflowException;
 import queuemanager.SortedLinkedPriorityQueue;
@@ -45,6 +51,9 @@ public class View implements Observer {
     Alarm alarmSound;
     JFrame frame;
     String icsString;
+    ArrayList<String> events;
+    Date alarmEntry;
+    Alarm alarmEntryAlarm;
     
     private String version =    "VERSION:2.0\r\n";
     private String prodid =     "PRODID://JonahJuliaoToral/SoftwareConstruction//\r\n";
@@ -53,6 +62,17 @@ public class View implements Observer {
     
     public View(Model model) {
         q = new SortedLinkedPriorityQueue<>();
+        
+        int answer = showWarningMessageLoad();
+                
+        switch (answer) {
+            case JOptionPane.YES_OPTION:
+                loadFile();
+                break;
+            case JOptionPane.NO_OPTION:
+                System.out.println("Don't load");
+                break;
+        }
         
         modelGlobal = model;
         
@@ -63,46 +83,11 @@ public class View implements Observer {
         frame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                int answer = showWarningMessage();
+                int answer = showWarningMessageSave();
                 
                 switch (answer) {
                     case JOptionPane.YES_OPTION:
-                        System.out.println("Save and Quit");
-                        
-                        alarmArray = (Object[]) q.returnArray();
-                        
-                        StringBuilder builder = new StringBuilder();
-                        builder.append("myAlarms");
-                        builder.append(".ics");
-                        
-                        icsString = "";
-                        
-                        for (int i = 0; i < alarmArray.length; i++) {
-                            icsString = icsString + ((Alarm) alarmArray[i]).getCalendarString(i);
-                        }
-                        
-                        System.out.println(icsString);
-                        
-                        try {
-                            File file = new File(builder.toString());
-                            
-                            if (!file.exists()) {
-                                file.createNewFile();
-                            }
-                            
-                            FileWriter fw = new FileWriter(file.getAbsoluteFile());
-                            BufferedWriter bw = new BufferedWriter(fw);
-                            bw.write(calBegin);
-                            bw.write(version);
-                            bw.write(prodid);
-                            bw.write(icsString);
-                            bw.write(calEnd);
-                            bw.close();
-                            
-                        } catch (IOException ex) {
-                            ex.printStackTrace();
-                        }
-                        
+                        saveFile();
                         break;
                     case JOptionPane.NO_OPTION:
                         System.out.println("Don't Save and Quit");
@@ -321,7 +306,6 @@ public class View implements Observer {
         
         viewPanel = new JPanel();
         
-        
         card2 = new JPanel(new BorderLayout());
         card2.add(viewPanel, BorderLayout.CENTER);
         card2.add(viewButtons, BorderLayout.PAGE_END);
@@ -369,7 +353,7 @@ public class View implements Observer {
         }  
     }
     
-    private int showWarningMessage() {
+    private int showWarningMessageSave() {
         String[] buttonLabels = new String[] {"Yes", "No"};
         String defaultOption = buttonLabels[0];
         Icon icon = null;
@@ -383,5 +367,123 @@ public class View implements Observer {
                 icon,
                 buttonLabels,
                 defaultOption);    
+    }
+    
+    private int showWarningMessageLoad() {
+        String[] buttonLabels = new String[] {"Yes", "No"};
+        String defaultOption = buttonLabels[0];
+        Icon icon = null;
+         
+        return JOptionPane.showOptionDialog(frame,
+                "Do you want to load iCal file?",
+                "Warning",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                icon,
+                buttonLabels,
+                defaultOption);    
+    }
+    
+    private ArrayList<String> readICSFile() throws FileNotFoundException, IOException {
+        ArrayList<String> events = new ArrayList<String>();
+        
+        int i = 0;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader("myAlarms.ics"))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                //System.out.println(line.substring(0, 8));
+                
+                if (line.substring(0, 8).equals("DTSTAMP:")) {
+                    events.add(line.substring(8, 23));
+                }
+
+                //events.add(line.substring(9, 24));
+            }
+        }
+        
+        return events;
+    }
+    
+    private void loadFile() {
+        try {
+            events = readICSFile();
+            for (int i = 0; i < events.size(); i++) {
+                alarmEntry = new Date();
+                
+                int year = Integer.parseInt(events.get(i).substring(0, 4));
+                year = year - 1900;
+                int month = Integer.parseInt(events.get(i).substring(4, 6));
+                month = month - 1;
+                int day = Integer.parseInt(events.get(i).substring(6, 8));
+                int hour = Integer.parseInt(events.get(i).substring(9, 11));
+                int minute = Integer.parseInt(events.get(i).substring(11, 13));
+                
+                //System.out.println(year);
+                
+                //System.out.println(Integer.parseInt(events.get(i).substring(0, 4)));
+                //System.out.println(Integer.parseInt(events.get(i).substring(4, 6)));
+                //System.out.println(Integer.parseInt(events.get(i).substring(6, 8)));
+                //System.out.println(Integer.parseInt(events.get(i).substring(9, 11)));
+                //System.out.println(Integer.parseInt(events.get(i).substring(11, 13)));
+                
+                alarmEntry.setYear(year);
+                alarmEntry.setMonth(month);
+                alarmEntry.setDate(day);
+                alarmEntry.setHours(hour);
+                alarmEntry.setMinutes(minute);
+                alarmEntry.setSeconds(0);
+                
+                //System.out.println(alarmEntry.getYear());
+
+                alarmEntryAlarm = new Alarm(alarmEntry);
+
+                try {
+                    q.add(alarmEntryAlarm, alarmEntryAlarm.getPriority(alarmEntry));
+                } catch (QueueOverflowException ex) {
+
+                }
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    private void saveFile() {
+        System.out.println("Save and Quit");
+                        
+        alarmArray = (Object[]) q.returnArray();
+
+        StringBuilder builder = new StringBuilder();
+        builder.append("myAlarms");
+        builder.append(".ics");
+
+        icsString = "";
+
+        for (int i = 0; i < alarmArray.length; i++) {
+            icsString = icsString + ((Alarm) alarmArray[i]).getCalendarString(i);
+        }
+
+        System.out.println(icsString);
+
+        try {
+            File file = new File(builder.toString());
+
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+
+            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+            BufferedWriter bw = new BufferedWriter(fw);
+            bw.write(calBegin);
+            bw.write(version);
+            bw.write(prodid);
+            bw.write(icsString);
+            bw.write(calEnd);
+            bw.close();
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
     }
 }

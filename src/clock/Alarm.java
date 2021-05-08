@@ -76,7 +76,7 @@ public class Alarm {
     
     public String getCalendarString(int i) {
         String calString = "BEGIN:VEVENT\r\n"
-                + "UID:" + i + "\r\n"
+                + "UID:" + i + "00000\r\n"
                 + "DTSTAMP:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutes() + "00Z\r\n"
                 + "DTSTART:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutes() + "00Z\r\n"
                 + "DTEND:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutesPlus1() + "00Z\r\n"
@@ -114,6 +114,43 @@ public class Alarm {
         }
         
         priority = Long.parseLong(String.valueOf(((Date) spinner.getValue()).getYear()) 
+                + month
+                + dateOfMonth
+                + hours
+                + minutes
+        );
+        
+        return priority;
+    }
+    
+    public long getPriority(Date date) {
+        priority = 0;
+        
+        if (date.getMonth() + 1 < 10) {
+            month = "0" + String.valueOf(date.getMonth() + 1);
+        } else {
+            month = String.valueOf(date.getMonth() + 1);
+        }
+        
+        if (date.getDate() < 10) {
+            dateOfMonth = "0" + String.valueOf(date.getDate());
+        } else {
+            dateOfMonth = String.valueOf(date.getDate());
+        }
+        
+        if (date.getHours() < 10) {
+            hours = "0" + String.valueOf(date.getHours());
+        } else {
+            hours = String.valueOf(date.getHours());
+        }
+        
+        if (date.getMinutes() < 10) {
+            minutes = "0" + String.valueOf(date.getMinutes());
+        } else {
+            minutes = String.valueOf(date.getMinutes());
+        }
+        
+        priority = Long.parseLong(String.valueOf(date.getYear()) 
                 + month
                 + dateOfMonth
                 + hours
