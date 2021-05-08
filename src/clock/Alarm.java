@@ -30,6 +30,62 @@ public class Alarm {
         return date;
     }
     
+    public String getYear() {
+        return String.valueOf(date.getYear() + 1900);
+    }
+    
+    public String getMonth() {
+        if ((date.getMonth() + 1) < 10) {
+            return "0" + String.valueOf(date.getMonth() + 1);
+        } else {
+            return String.valueOf(date.getMonth() + 1);
+        }
+    }
+    
+    public String getDay() {
+        if (date.getDate() < 10) {
+            return "0" + String.valueOf(date.getDate());
+        } else {
+            return String.valueOf(date.getDate());
+        }
+    }
+    
+    public String getHours() {
+        if (date.getHours() < 10) {
+            return "0" + String.valueOf(date.getHours());
+        } else {
+            return String.valueOf(date.getHours());
+        }
+    }
+    
+    public String getMinutes() {
+        if (date.getMinutes() < 10) {
+            return "0" + String.valueOf(date.getMinutes());
+        } else {
+            return String.valueOf(date.getMinutes());
+        }
+    }
+    
+    public String getMinutesPlus1() {
+        if (date.getMinutes() < 10) {
+            return "0" + String.valueOf(date.getMinutes() + 1);
+        } else {
+            return String.valueOf(date.getMinutes() + 1);
+        }
+    }
+    
+    public String getCalendarString(int i) {
+        String calString = "BEGIN:VEVENT\r\n"
+                + "UID:" + i + "\r\n"
+                + "DTSTAMP:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutes() + "00Z\r\n"
+                + "DTSTART:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutes() + "00Z\r\n"
+                + "DTEND:" + getYear() + getMonth() + getDay() + "T" + getHours() + getMinutesPlus1() + "00Z\r\n"
+                + "SUMMARY:Alarm" + (i + 1) + "\r\n"
+                + "END:VEVENT\r\n";
+        
+        return calString;
+    }
+    
     public long getPriority(JSpinner spinner) {
         priority = 0;
         

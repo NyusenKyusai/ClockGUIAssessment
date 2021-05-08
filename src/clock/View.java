@@ -4,6 +4,12 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Date;
 import javax.swing.*;
 import java.util.Observer;
@@ -38,6 +44,12 @@ public class View implements Observer {
     Model modelGlobal;
     Alarm alarmSound;
     JFrame frame;
+    String icsString;
+    
+    private String version =    "VERSION:2.0\r\n";
+    private String prodid =     "PRODID://JonahJuliaoToral/SoftwareConstruction//\r\n";
+    private String calBegin =   "BEGIN:VCALENDAR\r\n";
+    private String calEnd =     "END:VCALENDAR\r\n";
     
     public View(Model model) {
         q = new SortedLinkedPriorityQueue<>();
@@ -45,6 +57,60 @@ public class View implements Observer {
         modelGlobal = model;
         
         frame = new JFrame();
+        
+        frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+         
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                int answer = showWarningMessage();
+                
+                switch (answer) {
+                    case JOptionPane.YES_OPTION:
+                        System.out.println("Save and Quit");
+                        
+                        alarmArray = (Object[]) q.returnArray();
+                        
+                        StringBuilder builder = new StringBuilder();
+                        builder.append("myAlarms");
+                        builder.append(".ics");
+                        
+                        icsString = "";
+                        
+                        for (int i = 0; i < alarmArray.length; i++) {
+                            icsString = icsString + ((Alarm) alarmArray[i]).getCalendarString(i);
+                        }
+                        
+                        System.out.println(icsString);
+                        
+                        try {
+                            File file = new File(builder.toString());
+                            
+                            if (!file.exists()) {
+                                file.createNewFile();
+                            }
+                            
+                            FileWriter fw = new FileWriter(file.getAbsoluteFile());
+                            BufferedWriter bw = new BufferedWriter(fw);
+                            bw.write(calBegin);
+                            bw.write(version);
+                            bw.write(prodid);
+                            bw.write(icsString);
+                            bw.write(calEnd);
+                            bw.close();
+                            
+                        } catch (IOException ex) {
+                            ex.printStackTrace();
+                        }
+                        
+                        break;
+                    case JOptionPane.NO_OPTION:
+                        System.out.println("Don't Save and Quit");
+                        break;
+                }
+            }
+        });
+        
         panel = new ClockPanel(model);
         //frame.setContentPane(panel);
         frame.setTitle("Java Clock");
@@ -279,8 +345,8 @@ public class View implements Observer {
         try {
             alarmSound = (Alarm) q.head();
             
-            System.out.println(modelGlobal.time.getTime());
-            System.out.println(alarmSound.getDate().getTime());
+            //System.out.println(modelGlobal.time.getTime());
+            //System.out.println(alarmSound.getDate().getTime());
             
             if (modelGlobal.time.getTime() >= alarmSound.getDate().getTime()) {
                 JOptionPane pane = new JOptionPane("Your Alarm has gone off", JOptionPane.INFORMATION_MESSAGE);
@@ -300,8 +366,22 @@ public class View implements Observer {
             }
         } catch (QueueUnderflowException e) {
             //System.out.println("Add operation failed: " + e);
-        }
-        
-        
+        }  
+    }
+    
+    private int showWarningMessage() {
+        String[] buttonLabels = new String[] {"Yes", "No"};
+        String defaultOption = buttonLabels[0];
+        Icon icon = null;
+         
+        return JOptionPane.showOptionDialog(frame,
+                "There's still something unsaved.\n" +
+                "Do you want to save before exiting?",
+                "Warning",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE,
+                icon,
+                buttonLabels,
+                defaultOption);    
     }
 }
