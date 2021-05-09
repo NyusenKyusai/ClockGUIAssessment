@@ -506,7 +506,7 @@ public class View implements Observer {
             icsString = icsString + ((Alarm) alarmArray[i]).getCalendarString(i);
         }
 
-        System.out.println(icsString);
+        //System.out.println(icsString);
 
         try {
             File file = new File(builder.toString());
