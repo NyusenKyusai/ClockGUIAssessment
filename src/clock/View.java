@@ -26,34 +26,50 @@ import queuemanager.SortedLinkedPriorityQueue;
 
 public class View implements Observer {
     
+    Model modelGlobal;
+    
     ClockPanel panel;
-    JPanel viewPanel;
+    
+    JMenuBar menuBar;
+    JMenu alarmMenu;
+    JMenu fileMenu;
     JMenuItem addItem;
     JMenuItem viewItem;
-    JMenu alarmMenu;
     JMenuItem exitItem;
-    JMenu fileMenu;
-    JMenuBar menuBar;
-    JSpinner spinner;
+    
+    JPanel viewPanel;
     JPanel myPanel;
-    Date time;
-    SortedLinkedPriorityQueue q;
     JPanel card1;
     JPanel card2;
     JPanel cards;
-    ButtonGroup group;
     JPanel radioPanel;
-    JRadioButton[] alarmButtons;
-    Object[] alarmArray;
     JPanel viewButtons;
-    int counter;
-    Model modelGlobal;
-    Alarm alarmSound;
+    JPanel countdownPanel;
+    
+    JLabel countdown;
+    
     JFrame frame;
+    
+    JSpinner spinner;
+    
+    ButtonGroup group;
+    JRadioButton[] alarmButtons;
+    
+    Date alarmEntry;
+    Date time;
+    
+    Alarm alarmPopUp;
+    Alarm alarmEntryAlarm;
+    Alarm alarmCountdown;
+    
+    SortedLinkedPriorityQueue q;
+    
+    Object[] alarmArray;
+    
+    int counter;
+    
     String icsString;
     ArrayList<String> events;
-    Date alarmEntry;
-    Alarm alarmEntryAlarm;
     
     private String version =    "VERSION:2.0\r\n";
     private String prodid =     "PRODID://JonahJuliaoToral/SoftwareConstruction//\r\n";
@@ -97,6 +113,7 @@ public class View implements Observer {
         });
         
         panel = new ClockPanel(model);
+        countdownPanel = new JPanel();
         //frame.setContentPane(panel);
         frame.setTitle("Java Clock");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -287,12 +304,26 @@ public class View implements Observer {
         
         exitItem.addActionListener(new ExitItemListener());
         addItem.addActionListener(new AddItemListener());
-        viewItem.addActionListener(new ViewItemListener()); 
+        viewItem.addActionListener(new ViewItemListener());
+        
+        
+        
+        if (!q.isEmpty()) {
+            try {
+                alarmCountdown = (Alarm) q.head();
+            } catch (QueueUnderflowException ex) {
+                //Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        countdown = new JLabel(String.valueOf(alarmCountdown.countdown(model.time)));
         
         card1 = new JPanel(new BorderLayout());
+        countdownPanel.add(countdown);
          
         panel.setPreferredSize(new Dimension(200, 200));
         card1.add(panel, BorderLayout.CENTER);
+        card1.add(countdownPanel, BorderLayout.PAGE_END);
         
         JButton editButton = new JButton("Edit");
         JButton cancelButton = new JButton("Cancel");
@@ -326,13 +357,24 @@ public class View implements Observer {
     public void update(Observable o, Object arg) {
         panel.repaint();
         
+        if (!q.isEmpty()) {
+            try {
+                alarmCountdown = (Alarm) q.head();
+            } catch (QueueUnderflowException ex) {
+                //Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        
+        countdown.setText(String.valueOf(alarmCountdown.countdown(modelGlobal.time)));
+        countdownPanel.repaint();
+        
         try {
-            alarmSound = (Alarm) q.head();
+            alarmPopUp = (Alarm) q.head();
             
             //System.out.println(modelGlobal.time.getTime());
             //System.out.println(alarmSound.getDate().getTime());
             
-            if (modelGlobal.time.getTime() >= alarmSound.getDate().getTime()) {
+            if (modelGlobal.time.getTime() >= alarmPopUp.getDate().getTime()) {
                 JOptionPane pane = new JOptionPane("Your Alarm has gone off", JOptionPane.INFORMATION_MESSAGE);
                 final JDialog dialog = pane.createDialog(null, "Alarm");
                 
