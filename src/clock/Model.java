@@ -14,6 +14,8 @@ public class Model extends Observable {
     int oldSecond = 0;
     
     int year = 0;
+    
+    // Date variables that can be called from other methods
     Date time;
     Date initialTime;
     
@@ -34,11 +36,15 @@ public class Model extends Observable {
         
         year = date.get(Calendar.YEAR);
         
+        // Creating a calendar variable to set the Date time to so that it can be used in the view class
         Calendar alarmMin = Calendar.getInstance();
+        // Taking the new Date variable that was created and setting it's time to the current time
         time = date.getTime();
+        // Setting the current time to the alarmMin calendar variable created
         alarmMin.setTime(time);
-        
+        // Subtracting a minute from the current time
         alarmMin.add(Calendar.MINUTE, -1);
+        // Making a new date variable and setting the new time to it
         initialTime = alarmMin.getTime();
         
     }
