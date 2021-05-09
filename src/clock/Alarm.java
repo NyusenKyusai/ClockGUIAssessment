@@ -86,6 +86,18 @@ public class Alarm {
         return calString;
     }
     
+    public long countdown(Date officialDate) {
+        long countdownTime = 0;
+        
+        if (date.getTime() - officialDate.getTime() < 0) {
+            countdownTime = 0;
+        } else {
+            countdownTime = date.getTime() - officialDate.getTime();
+        }
+        
+        return countdownTime / 1000;
+    }
+    
     public long getPriority(JSpinner spinner) {
         priority = 0;
         
