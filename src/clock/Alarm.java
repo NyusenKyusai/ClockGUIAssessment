@@ -10,7 +10,7 @@ import javax.swing.JSpinner;
 
 /**
  * Alarm class that holds the data that is inserted into the PriorityQueue
- * @date 09/05/2021
+ * 09/05/2021
  * @author Jonah Juliao Toral
  */
 public class Alarm {
@@ -30,8 +30,7 @@ public class Alarm {
     /**
      * Constructor for the data class
      * 
-     * Variable that is thrown is set equal to the global date
-     * @param date
+     * @param date  Variable that is thrown is set equal to the global date
      */
     public Alarm(Date date) {
         // Takes the date that was put into the constructor and set to the global date variable
@@ -41,8 +40,7 @@ public class Alarm {
     /**
      * Method to return the date variable
      * 
-     * Return the global date
-     * @return date 
+     * @return date Return the global date
      */
     public Date getDate() {
         return date;
@@ -51,8 +49,7 @@ public class Alarm {
     /**
      * Method to return string version of the year
      * 
-     * Returns the year + 1900
-     * @return String
+     * @return String   Returns the year + 1900 converted as a string
      */
     public String getYear() {
         // Taking the year value from the date variable and adding 1900 since this method subtracts 1900 from the current year
@@ -62,8 +59,8 @@ public class Alarm {
     /**
      * Method to return string version of the month
      * 
-     * Returns the month + 1
-     * @return String
+     * @return String   Returns the month + 1 by converting it to a string and adding
+     *                  a 0 at the beginning if it is less than 0
      */
     public String getMonth() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
@@ -79,8 +76,8 @@ public class Alarm {
     /**
      * Method to return string version of the date
      * 
-     * Returns the date
-     * @return String
+     * @return String   Returns the date by converting it to a string and adding
+     *                  a 0 at the beginning if it is less than 0
      */
     public String getDay() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
@@ -96,8 +93,8 @@ public class Alarm {
     /**
      * Method to return string version of the hours
      * 
-     * Returns the hours
-     * @return String
+     * @return String   Returns the hours by converting it to a string and adding
+     *                  a 0 at the beginning if it is less than 0
      */
     public String getHours() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
@@ -113,8 +110,8 @@ public class Alarm {
     /**
      * Method to return string version of the minutes
      * 
-     * Returns the minutes
-     * @return String
+     * @return String   Returns the minutes by converting it to a string and adding
+     *                  a 0 at the beginning if it is less than 0
      */
     public String getMinutes() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
@@ -129,9 +126,8 @@ public class Alarm {
     
     /**
      * Method to return string version of the minutes + 1
-     *
-     * Returns the minutes plus 1
-     * @return String
+     * 
+     * @return String   Returns the minutes plus 1
      */
     public String getMinutesPlus1() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
@@ -149,9 +145,9 @@ public class Alarm {
      * using string methods to add 0's when necessary.
      * Has internal formatting to comply with ical
      *
-     * Int that determines the UID as well as the alarm number
-     * @param i
-     * @return
+     * @param i Int that determines the UID as well as the alarm number
+     * @return calString holds the event data for each alarm to be added to an
+     *                   ical file
      */
     public String getCalendarString(int i) {
         String calString = "BEGIN:VEVENT\r\n"
@@ -257,7 +253,9 @@ public class Alarm {
      *
      * @param date  date that the value is taken out of and formatted to 
      *              make a priority out of
-     * @return priority 
+     * @return priority a long variable that is parsed from a string specifically
+     *                  to keep zeros in front of numbers less that 10 to keep the
+     *                  formating of dates
      */
     public long getPriority(Date date) {
         priority = 0;
