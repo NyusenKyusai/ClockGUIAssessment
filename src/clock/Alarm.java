@@ -9,12 +9,14 @@ import java.util.Date;
 import javax.swing.JSpinner;
 
 /**
- *
- * @author Jonah
+ * Alarm class that holds the data that is inserted into the PriorityQueue
+ * @date 09/05/2021
+ * @author Jonah Juliao Toral
  */
 public class Alarm {
-    
-    // Date variable that takes the date when the class is initialised
+    /**
+     * Creating global variables to be used
+     */
     protected Date date;
     // Long variable to hold the priority that is created
     long priority;
@@ -25,24 +27,44 @@ public class Alarm {
     String minutes;
     String seconds;
 
-    // Constructor for the data class
+    /**
+     * Constructor for the data class
+     * 
+     * Variable that is thrown is set equal to the global date
+     * @param date
+     */
     public Alarm(Date date) {
         // Takes the date that was put into the constructor and set to the global date variable
         this.date = date;
     }
 
-    // Method to return the date variable
+    /**
+     * Method to return the date variable
+     * 
+     * Return the global date
+     * @return date 
+     */
     public Date getDate() {
         return date;
     }
-    
-    // Method to return string version of the year
+
+    /**
+     * Method to return string version of the year
+     * 
+     * Returns the year + 1900
+     * @return String
+     */
     public String getYear() {
         // Taking the year value from the date variable and adding 1900 since this method subtracts 1900 from the current year
         return String.valueOf(date.getYear() + 1900);
     }
-    
-    // Method to return string version of the month
+
+    /**
+     * Method to return string version of the month
+     * 
+     * Returns the month + 1
+     * @return String
+     */
     public String getMonth() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
         if ((date.getMonth() + 1) < 10) {
@@ -54,7 +76,12 @@ public class Alarm {
         }
     }
     
-    // Method to return string version of the date
+    /**
+     * Method to return string version of the date
+     * 
+     * Returns the date
+     * @return String
+     */
     public String getDay() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
         if (date.getDate() < 10) {
@@ -66,7 +93,12 @@ public class Alarm {
         }
     }
     
-    // Method to return string version of the hours
+    /**
+     * Method to return string version of the hours
+     * 
+     * Returns the hours
+     * @return String
+     */
     public String getHours() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
         if (date.getHours() < 10) {
@@ -78,7 +110,12 @@ public class Alarm {
         }
     }
     
-    // Method to return string version of the minutes
+    /**
+     * Method to return string version of the minutes
+     * 
+     * Returns the minutes
+     * @return String
+     */
     public String getMinutes() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
         if (date.getMinutes() < 10) {
@@ -90,7 +127,12 @@ public class Alarm {
         }
     }
     
-    // Method to return string version of the minutes + 1
+    /**
+     * Method to return string version of the minutes + 1
+     *
+     * Returns the minutes plus 1
+     * @return String
+     */
     public String getMinutesPlus1() {
         // If statement to add a 0 to the beginning of a string if the value is less than 0
         if (date.getMinutes() < 10) {
@@ -102,7 +144,15 @@ public class Alarm {
         }
     }
     
-    // Method to take the individual values of the time and putting it into a string for the ICal file
+    /**
+     * Takes individual values of the time and puts them into a string for the ICal file
+     * using string methods to add 0's when necessary.
+     * Has internal formatting to comply with ical
+     *
+     * Int that determines the UID as well as the alarm number
+     * @param i
+     * @return
+     */
     public String getCalendarString(int i) {
         String calString = "BEGIN:VEVENT\r\n"
                 + "UID:" + i + "00000\r\n"
@@ -115,8 +165,15 @@ public class Alarm {
         
         return calString;
     }
-    
-    // Method to create a countdown until the next alarm
+
+    /**
+     * Creates a countdown until the next alarm in seconds by subtracting the alarm time
+     * by the current time. If it less than zero, it is zero
+     * 
+     * @param officialDate the date that the alarm time is taken out of
+     * @return countdownTime    long that holds the seconds until the alarm goes
+     *                          off
+     */
     public long countdown(Date officialDate) {
         long countdownTime = 0;
         
@@ -132,8 +189,17 @@ public class Alarm {
         return countdownTime / 1000;
     }
     
-    // Method to take the spinner and extract the time from it. Using this time to create a custom priority
-    // for the PriorityQueue
+    // 
+
+    /**
+     * Method to take the spinner and extract the time from it. Using this time 
+     * to create a custom priority for the PriorityQueue
+     * 
+     * @param spinner   spinner that the value is taken out of and formatted to 
+     *                  make a priority out of
+     * @return priority long that holds the formatted priority that serves to order
+     *                  the alarms in the priority queue
+     */
     public long getPriority(JSpinner spinner) {
         priority = 0;
         
@@ -186,7 +252,13 @@ public class Alarm {
         return priority;
     }
     
-    // Same method as the one above, but it takes in a date instead of a spinner
+    /**
+     * Same method as the one above, but it takes in a date instead of a spinner
+     *
+     * @param date  date that the value is taken out of and formatted to 
+     *              make a priority out of
+     * @return priority 
+     */
     public long getPriority(Date date) {
         priority = 0;
         
