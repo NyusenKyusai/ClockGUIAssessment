@@ -1,21 +1,40 @@
 package clock;
 
 import java.awt.*;
-import java.awt.event.*;
 import java.awt.geom.*;
 import java.awt.font.*;
 import javax.swing.*;
 
+/**
+ * Clock class that starts the MVC classes and connects them to each other
+ * 09/05/2021
+ * @author Jonah Juliao Toral
+ */
 public class ClockPanel extends JPanel {
     
     Model model;
     
+    /**
+     * Constructor class that takes in the model and sets it equal to a global
+     * model class. It also sets the dimensions of the panel as well as the 
+     * background colour
+     * 
+     * @param m model parameter that handles the updating of the time to allow
+     *          for the clock to operate and show the correct time
+     */
     public ClockPanel(Model m) {
         model = m;
         setPreferredSize(new Dimension(200, 200));
         setBackground(Color.white);
     }
     
+    /**
+     * This class handles the creation of the clock face. It creates the lines 
+     * using trig formulas and radians at specific angles in the circle
+     * 
+     * @param g graphics parameter that handles drawing the lines for the times,
+     *          the clock hands and the numbers on the sides of the clock
+     */
     @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);

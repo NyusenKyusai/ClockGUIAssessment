@@ -5,6 +5,12 @@ import java.util.Date;
 import java.util.Observable;
 //import java.util.GregorianCalendar;
 
+/**
+ * Model class that handles the updating of the time values to change the clock
+ * face. Uses the Calendar and Date classes to do this
+ * 09/05/2021
+ * @author Jonah Juliao Toral
+ */
 public class Model extends Observable {
     
     int hour = 0;
@@ -19,10 +25,24 @@ public class Model extends Observable {
     Date time;
     Date initialTime;
     
+    /**
+     * Constructor method for the model class that calls the update method to
+     * get the initial time when the class is called initially
+     * 
+     */
     public Model() {
         update();
     }
     
+    /**
+     * Method that calls a Calendar class to get the current time. It compares
+     * the current second to the old second and only notifies the view when a change
+     * has been detected, otherwise it will send too many pings to the view. I also
+     * added some more code to be able to subtract a minute from the time to handle
+     * the minimum time of the spinner so that the user can not go into the past
+     * with their alarms
+     * 
+     */
     public void update() {
         Calendar date = Calendar.getInstance();
         hour = date.get(Calendar.HOUR);

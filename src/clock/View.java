@@ -22,6 +22,14 @@ import queuemanager.QueueOverflowException;
 import queuemanager.QueueUnderflowException;
 import queuemanager.SortedLinkedPriorityQueue;
 
+/**
+ * View class that handles how the application looks. It creates panels, frames,
+ * dialog boxes, etc to format the application. This method also holds the
+ * priority queue and handles the writing, reading, saving, and loading of the
+ * ical file
+ * 09/05/2021
+ * @author Jonah Juliao Toral
+ */
 public class View implements Observer {
     // Taking the model that was passed into view and making it a global variable
     Model modelGlobal;
@@ -84,6 +92,13 @@ public class View implements Observer {
     private String calBegin =   "BEGIN:VCALENDAR\r\n";
     private String calEnd =     "END:VCALENDAR\r\n";
     
+    /**
+     * This is the constructor method that creates the layout of the application.
+     * It also handles most of the code that creates alarms, edits them, and saves
+     * them to the computer. It handles a lot of the actions of buttons, spinners,
+     * and dialog boxes
+     * @param model model that is passed to be used to update the times on the clock face correctly 
+     */
     public View(Model model) {
         // Initialising the sorted priority queue variable
         q = new SortedLinkedPriorityQueue<>();
@@ -210,6 +225,21 @@ public class View implements Observer {
         class ExitItemListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent event) {
+                // This creates a dialogue box and then saved the answer
+                int answer = showWarningMessageSave();
+                
+                // Switch case to handle the answer from the dialogue box
+                switch (answer) {
+                    case JOptionPane.YES_OPTION:
+                        // Calling the save file method in the case the user
+                        // chose to save the alarms
+                        saveFile();
+                        break;
+                    case JOptionPane.NO_OPTION:
+                        System.out.println("Don't Save and Quit");
+                        break;
+                }
+                
                 System.exit(0);
             }
         }
@@ -436,8 +466,16 @@ public class View implements Observer {
         frame.pack();
         frame.setVisible(true);
     }
-    
-    // Method that handles the parts of the view method that  need to be updated
+   
+    /**
+     * Method that handles the parts of the view method that  need to be updated
+     * It repaints the panel as well creating a counter that shows the user how
+     * much time is left until the next alarm. Since this method updates regularly,
+     * it is the method that handles the alarms going off at the correct time with a dialogue
+     * box. It creates a timer in case the user does not close the alarm themselves.
+     * Without the timer, the clock freezes until the user closes the dialogue box
+     * 
+     */
     @Override
     public void update(Observable o, Object arg) {
         // Repainting the clock
@@ -495,7 +533,12 @@ public class View implements Observer {
         }  
     }
     
-    // Method that creates a dialog box and returns the result
+    /**
+     * Method creates the dialogue box and returns it to the view to handle the
+     * option that the user has selected; specifically asking the user if they 
+     * would like to save before exiting the application
+     * 
+     */
     private int showWarningMessageSave() {
         String[] buttonLabels = new String[] {"Yes", "No"};
         String defaultOption = buttonLabels[0];
@@ -513,7 +556,12 @@ public class View implements Observer {
                 defaultOption);    
     }
     
-    // Method that creates a dialog box and returns the result
+    /**
+     * Method creates the dialogue box and returns it to the view to handle the
+     * option that the user has selected; Specifically for when the application 
+     * starts to ask the user if they want to load the saved ical file
+     * 
+     */
     private int showWarningMessageLoad() {
         String[] buttonLabels = new String[] {"Yes", "No"};
         String defaultOption = buttonLabels[0];
@@ -530,7 +578,21 @@ public class View implements Observer {
                 defaultOption);    
     }
     
-    // Method to read the ICS File from the project folder
+    /**
+     * Method to read the ICS File from the project folder. It goes down the file
+     * line by line until it finds the specific line that hold the date time necessary
+     * to put into the priority queue
+     * 
+     * @throws FileNotFoundException    exception the is needed for when the file
+     *                                  does not exist so that it does not crash
+     *                                  the application
+     * @throws IOException  exception that handles the implicit calling of br.close()
+     *                      to close the buffered reader so  it doesn't run forever
+     * @return events   ArrayList that holds all of the alarms that need to be inserted
+     *                  back into the priority queue to be used by the alarm. Needs
+     *                  to be ArrayList because the number of alarms is never known
+     * 
+     */
     private ArrayList<String> readICSFile() throws FileNotFoundException, IOException {
         // Initialising an array list of strings / Array list so that the size 
         // can be variable
@@ -560,7 +622,13 @@ public class View implements Observer {
         return events;
     }
     
-    // Method to load the file
+    /**
+     * Method to load the file. It calls the readICSFile method and takes the
+     * strings and parses substrings of them into integers by year, month, day, 
+     * hour, minute, and second. It takes these integers and sets them into a date
+     * instance to then insert them as objects into the priority queue
+     * 
+     */
     private void loadFile() {
         // Trying to read the file
         try {
@@ -625,7 +693,13 @@ public class View implements Observer {
         }
     }
     
-    // Method to save events to the file
+    /**
+     * Method to save events to the file. It takes the method that returns an array
+     * of objects and casts it to alarm. It then uses the string method from the alarm
+     * class to create a working string that complies with iCalendar specifications.
+     * Finally it uses buffered writer to write it to the file in the project folder
+     * 
+     */
     private void saveFile() {
         System.out.println("Save and Quit");
                         
