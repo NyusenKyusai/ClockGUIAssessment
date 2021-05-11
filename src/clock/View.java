@@ -268,12 +268,19 @@ public class View implements Observer {
                     // Calling the priority method from the alarm class using a spinner
                     // to get a custom priority for the priority queue
                     long priority = alarm.getPriority(spinner);
-                    // Try method to add the alarm using the priority
-                    try {
-                        // Calling the add method to add the alarm class instance
-                        q.add(alarm, priority);
-                    } catch (QueueOverflowException e) {
-                        System.out.println("Add operation failed: " + e);
+                    
+                    //System.out.println(q.priorityExists(priority));
+                    
+                    if (!q.priorityExists(priority)) {
+                        // Try method to add the alarm using the priority
+                        try {
+                            // Calling the add method to add the alarm class instance
+                            q.add(alarm, priority);
+                        } catch (QueueOverflowException e) {
+                            System.out.println("Add operation failed: " + e);
+                        }
+                    } else {
+                        System.out.println("Alarm already exists");
                     }
                     
                     //System.out.println(q.toString());
@@ -285,6 +292,10 @@ public class View implements Observer {
         class ViewItemListener implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent event) {
+                // Removing everything from the radio panel
+                // Otherwise the panel doubles in size every time we switch to
+                // the view card
+                radioPanel.removeAll();
                 // Creating a card layout variable that handles showing the cards
                 // for the frame
                 CardLayout cl = (CardLayout)(cards.getLayout());
@@ -314,6 +325,11 @@ public class View implements Observer {
                     // group
                     radioPanel.add(alarmButtons[i]);
                     group.add(alarmButtons[i]);
+                    
+                    // If statement to select the first alarm
+                    if (i == 0) {
+                        alarmButtons[i].setSelected(true);
+                    }
                 }
                 // Adding the radioPanel panel to the view panel that was created for the view button
                 // card
@@ -330,10 +346,6 @@ public class View implements Observer {
                 CardLayout cl = (CardLayout)(cards.getLayout());
                 // Showing the MainPanel card instead of creating a new frame
                 cl.show(cards, "MainPanel");
-                // Removing everything from the radio panel
-                // Otherwise the panel doubles in size every time we switch to
-                // the view card
-                radioPanel.removeAll();
             }
         }
         
@@ -358,45 +370,49 @@ public class View implements Observer {
                     }
                 }
                 
-                // Initialising the alarm info variable
-                Alarm info = null;
-                // Setting the values of the dialog buttons
-                Object[] options = {"Save", "Cancel"};
-                // Showing the user the same dialog as before, this time to edit the 
-                // alarm
-                int option = JOptionPane.showOptionDialog(addItem, myPanel, "Select Date and Time for Alarm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
-                // Using the answer from the dialog to run code
-                if (option == JOptionPane.OK_OPTION) {
-                    // Trying to delete the alarm using it's priority 
-                    try {
-                        info = (Alarm) q.deleteUsingPriority(priority);
-                    } catch (QueueUnderflowException e) {
-                        System.out.println("Add operation failed: " + e);
+                if (priority != 0) {
+                    // Initialising the alarm info variable
+                    Alarm info = null;
+                    // Setting the values of the dialog buttons
+                    Object[] options = {"Save", "Cancel"};
+                    // Showing the user the same dialog as before, this time to edit the 
+                    // alarm
+                    int option = JOptionPane.showOptionDialog(addItem, myPanel, "Select Date and Time for Alarm", JOptionPane.OK_CANCEL_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]);
+                    // Using the answer from the dialog to run code
+                    if (option == JOptionPane.OK_OPTION) {
+                        // Taking the value from the spinner and adding it to an alarm
+                        // class
+                        Alarm alarm = new Alarm((Date) spinner.getValue());
+
+                        // Getting the new priority by calling the method in the alarm class
+                        long newPriority = alarm.getPriority(spinner);
+                        
+                        if (!q.priorityExists(newPriority)) {
+                            // Trying to add the new alarm to the priority queue with 
+                            // the new priority
+                            try {
+                                // Calling the add method to add the alarm class instance
+                                q.add(alarm, newPriority);
+                            } catch (QueueOverflowException e) {
+                                System.out.println("Add operation failed: " + e);
+                            }
+                            
+                            // Trying to delete the alarm using it's priority 
+                            try {
+                                info = (Alarm) q.deleteUsingPriority(priority);
+                            } catch (QueueUnderflowException e) {
+                                System.out.println("Add operation failed: " + e);
+                            }
+                        } else {
+                            System.out.println("Alarm already exists");
+                        }
+
+                        //System.out.println(q.toString());
+                        // Showing the Main Panel card after the alarm has been edited
+                        cl.show(cards, "MainPanel");
                     }
-                    
-                    // Taking the value from the spinner and adding it to an alarm
-                    // class
-                    Alarm alarm = new Alarm((Date) spinner.getValue());
-                    
-                    // Getting the new priority by calling the method in the alarm class
-                    long newPriority = alarm.getPriority(spinner);
-                    // Trying to add the new alarm to the priority queue with 
-                    // the new priority
-                    try {
-                        q.add(alarm, newPriority);
-                    } catch (QueueOverflowException e) {
-                        System.out.println("Add operation failed: " + e);
-                    }
-                    
-                    //System.out.println(q.toString());
-                    // Showing the Main Panel card after the alarm has been edited
-                    cl.show(cards, "MainPanel");
                 }
                 
-                // Removing everything from the radio panel
-                // Otherwise the panel doubles in size every time we switch to
-                // the view card
-                radioPanel.removeAll();
             }
         }
         
