@@ -334,7 +334,6 @@ public class View implements Observer {
                 // Otherwise the panel doubles in size every time we switch to
                 // the view card
                 radioPanel.removeAll();
-                
             }
         }
         
@@ -407,17 +406,20 @@ public class View implements Observer {
         addItem.addActionListener(new AddItemListener());
         viewItem.addActionListener(new ViewItemListener());
         
+        countdown = new JLabel("0");
+        
         // Trying to find the first alarm in the queue and setting it to an 
         // initialised alarm variable
         try {
             alarmCountdown = (Alarm) q.head();
+            // Initialising the countdown label with string the countdown method
+            // from the alarm class
+            countdown = new JLabel(String.valueOf(alarmCountdown.countdown(model.time)));
         } catch (QueueUnderflowException ex) {
             //Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Initialising the countdown label with string the countdown method
-        // from the alarm class
-        countdown = new JLabel(String.valueOf(alarmCountdown.countdown(model.time)));
+        
         
         // Initialising the card with a border layout
         card1 = new JPanel(new BorderLayout());
@@ -484,14 +486,15 @@ public class View implements Observer {
         // Trying to get the head of the priority queue
         try {
             alarmCountdown = (Alarm) q.head();
+            // Setting the text of the countdown equal to the string of what the countdown
+            // method passes back
+            // If there are no alarms, it just sends 0
+            countdown.setText(String.valueOf(alarmCountdown.countdown(modelGlobal.time)));
         } catch (QueueUnderflowException ex) {
             //Logger.getLogger(View.class.getName()).log(Level.SEVERE, null, ex);
         }
         
-        // Setting the text of the countdown equal to the string of what the countdown
-        // method passes back
-        // If there are no alarms, it just sends 0
-        countdown.setText(String.valueOf(alarmCountdown.countdown(modelGlobal.time)));
+        
         // Repaints the coundown panel to show the change
         countdownPanel.repaint();
         
