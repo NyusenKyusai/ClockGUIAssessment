@@ -134,6 +134,8 @@ public class Alarm {
         if (date.getMinutes() < 10) {
             // Adding a 0 to the begging of the string
             return "0" + String.valueOf(date.getMinutes() + 1);
+        } else if(date.getMinutes() == 59) { 
+            return "00";
         } else {
             // Returning a string of the minutes + 1
             return String.valueOf(date.getMinutes() + 1);
